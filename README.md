@@ -1,4 +1,4 @@
-# Pastebin-lite-Clone
+# Pastebin-lite Clone
 A minimal Pastebin-like service that allows users to create text pastes and share links to view them.  
 Supports optional expiration (TTL) and view limits.
 
