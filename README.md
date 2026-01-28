@@ -38,6 +38,7 @@ Vercel
 
 📦 API
 POST /api/pastes
+
 {
   "content": "hello",
   "ttl_seconds": 60,
@@ -66,7 +67,9 @@ npm start
 Create .env:
 
 UPSTASH_REDIS_REST_URL=your_url
+
 UPSTASH_REDIS_REST_TOKEN=your_token
+
 BASE_URL=http://localhost:3000
 
 ⚙ Design Notes
