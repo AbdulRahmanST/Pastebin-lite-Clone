@@ -1,87 +1,133 @@
 # Pastebin-lite-Clone
-A minimal Pastebin-like service that allows users to create text pastes and share a link to view them. Pastes may optionally expire by time (TTL) or by view count.
+A minimal Pastebin-like service that allows users to create text pastes and share links to view them.  
+Supports optional expiration (TTL) and view limits.
 
-Deployed using Node.js + Express with Redis (Upstash) persistence.
+Built with **Node.js + Express + Redis (Upstash)** and deployed on **Vercel**.
 
-🚀 Live Demo
+## 🚀 Live Demo
 
-https://paste-bin-clone-sandy.vercel.app
+- Base URL:  
+  https://paste-bin-clone-sandy.vercel.app  
+- Health Check:  
+  https://paste-bin-clone-sandy.vercel.app/api/healthz
 
-Health Check:
-https://paste-bin-clone-sandy.vercel.app/api/healthz
+  ---
 
-✅ Features
+## ✅ Features
 
-Create a paste with arbitrary text
+- Create a paste with arbitrary text
 
-Receive a shareable URL
+- Receive a shareable URL
 
-View paste via API or browser
+- View paste via API or browser
 
-Optional time-to-live (TTL)
+- Optional time-to-live (TTL)
 
-Optional maximum view count
+- Optional maximum view count
 
-Deterministic time support for testing
+- Deterministic time support for testing
 
-Persistent storage using Redis
+- Persistent storage using Redis
 
-🧱 Tech Stack
+  ---
 
-Node.js
+### 🧱 Tech Stack
 
-Express.js
+- Node.js
 
-Upstash Redis
+- Express.js
 
-Vercel
+- Upstash Redis
 
-📦 API
-POST /api/pastes
+- Vercel
 
+---
+
+### 📦 API
+`POST /api/pastes`
+```json
 {
   "content": "hello",
   "ttl_seconds": 60,
   "max_views": 5
 }
-
-GET /api/pastes/:id
+```
+### ➤ Fetch Paste (API)
+`GET /api/pastes/:id`
 
 Returns paste JSON.
 
-GET /p/:id
+### ➤ View Paste (HTML)
+`GET /p/:id`
 
 Returns HTML.
 
-🗄 Persistence Layer
+### 🗄 Persistence Layer
 
 Upstash Redis (REST).
 
 Chosen because it is serverless-safe and persists across requests.
 
 ▶ Run Locally
+```bash
 npm install
 npm start
+```
 
 
-Create .env:
-
+### Create .env :
+```env
 UPSTASH_REDIS_REST_URL=your_url
-
 UPSTASH_REDIS_REST_TOKEN=your_token
-
 BASE_URL=http://localhost:3000
+```
+### 🧪 Quick Test
+```bash
+curl -X POST http://localhost:3000/api/pastes \
+-H "Content-Type: application/json" \
+-d '{"content":"hello","max_views":2}'
+```
+### ⚙ Design Notes
 
-⚙ Design Notes
+- Redis stores JSON blobs
 
-Redis stores JSON blobs
+- No in-memory global state
 
-No in-memory global state
+- View counts decremented safely
 
-View counts decremented safely
+- Expiry checked on read
 
-Expiry checked on read
+### 🔁 Flow
 
-📄 License
+1. User sends request to Express API.
+2. API validates input.
+3. Paste is stored or fetched from Redis.
+4. API enforces TTL and view limits.
+5. Response returned to user.
 
-MIT
+## 🏗 Architecture
+
+```mermaid
+flowchart TD
+    User[User / Browser]
+    API[Express API - Vercel]
+    Redis[(Upstash Redis)]
+
+    User -->|POST /api/pastes| API
+    User -->|GET /api/pastes/:id| API
+    User -->|GET /p/:id| API
+
+    API -->|Store Paste| Redis
+    API -->|Fetch Paste| Redis
+```
+### How it will render on GitHub:
+---
+```yaml
+User / Browser  
+    │  
+    ▼  
+Express API (Node.js + Express on Vercel)  
+    │  
+    ▼  
+Upstash Redis (Persistent Storage)
+```
